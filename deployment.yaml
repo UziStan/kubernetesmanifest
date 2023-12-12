@@ -18,7 +18,7 @@ spec:
         app: flaskdemo
     spec:
       containers:
-      - image: deejayz/test:${env.BUILD_NUMBER}
+      - image: deejayz/test:latest
         name: flaskdemo
         resources: {}
 status: {}
