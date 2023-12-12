@@ -15,7 +15,7 @@ node {
             script {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
          userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/UziStan/kubernetesmanifest.git']]]) {
- {
+ 
                         sh "git config user.email uzomasokonyia@gmail.com"
                         sh "git config user.name UziStan"
                         sh "cat deployment.yaml"
@@ -27,4 +27,10 @@ node {
       }
     }
   }
-}
+
+
+
+
+
+
+
