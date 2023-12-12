@@ -1,6 +1,10 @@
 node {
     def app
 
+   environment {
+        GIT_ACCESS_TOKEN = credentials('github') 
+    }
+
     stage('Clone repository') {
       
 
@@ -12,10 +16,8 @@ node {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
          userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/UziStan/kubernetesmanifest.git']]]) {
  {
-                        //def encodedPassword = URLEncoder.encode("$GIT_PASSWORD",'UTF-8')
                         sh "git config user.email uzomasokonyia@gmail.com"
                         sh "git config user.name UziStan"
-                        //sh "git switch master"
                         sh "cat deployment.yaml"
                         sh "sed -i 's+deejayz/test.*+deejayz/test:${DOCKERTAG}+g' deployment.yaml"
                         sh "cat deployment.yaml"
