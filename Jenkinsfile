@@ -11,11 +11,17 @@ node {
         checkout scm
     }
 
-    stage('Update GIT') {
-            script {
+    stages {
+        stage('Update GIT') {
+            steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-         userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/UziStan/kubernetesmanifest.git']]]) {
- 
+                    script {
+                        checkout([$class: 'GitSCM', 
+                                  branches: [[name: 'main']], 
+                                  doGenerateSubmoduleConfigurations: false, 
+                                  extensions: [], 
+                                  userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/UziStan/kubernetesmanifest.git']]])
+
                         sh "git config user.email uzomasokonyia@gmail.com"
                         sh "git config user.name UziStan"
                         sh "cat deployment.yaml"
@@ -23,8 +29,11 @@ node {
                         sh "cat deployment.yaml"
                         sh "git add ."
                         sh "git commit -m 'Done by Jenkins Job changemanifest: ${env.BUILD_NUMBER}'"
-                        sh "git push https://UziStan:${GIT_ACCESS_TOKEN}:@github.com/UziStan/kubernetesmanifest.git HEAD:main"
-      }
+                        sh "git push https://UziStan:${GIT_ACCESS_TOKEN}@github.com/UziStan/kubernetesmanifest.git HEAD:main"
+                    }
+                }
+            }
+        }
     }
   }
 
