@@ -1,41 +1,31 @@
 node {
     def app
 
-   environment {
-        GIT_ACCESS_TOKEN = credentials('github') 
-    }
-
     stage('Clone repository') {
       
 
         checkout scm
     }
 
-    stages {
-        stage('Update GIT') {
-            steps {
+   stage('Update GIT') {
+            script {
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                    script {
-                        checkout([$class: 'GitSCM', 
-                                  branches: [[name: 'main']], 
-                                  doGenerateSubmoduleConfigurations: false, 
-                                  extensions: [], 
-                                  userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/UziStan/kubernetesmanifest.git']]])
-
+                    withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        //def encodedPassword = URLEncoder.encode("$GIT_PASSWORD",'UTF-8')
                         sh "git config user.email uzomasokonyia@gmail.com"
                         sh "git config user.name UziStan"
+                        //sh "git switch master"
                         sh "cat deployment.yaml"
                         sh "sed -i 's+deejayz/test.*+deejayz/test:${DOCKERTAG}+g' deployment.yaml"
                         sh "cat deployment.yaml"
                         sh "git add ."
                         sh "git commit -m 'Done by Jenkins Job changemanifest: ${env.BUILD_NUMBER}'"
-                        sh "git push https://UziStan:${GIT_ACCESS_TOKEN}@github.com/UziStan/kubernetesmanifest.git HEAD:main"
-                    }
-                }
-            }
-        }
+                        sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/kubernetesmanifest.git HEAD:main"
+      }
     }
   }
+ }
+}
 
 
 
